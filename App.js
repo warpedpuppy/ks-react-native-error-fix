@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, Button, Alert, ScrollView } from 'react-native';
+import { StyleSheet} from 'react-native';
 import 'react-native-gesture-handler';
 
 // navigation
@@ -30,7 +30,7 @@ export default class App extends React.Component {
         name='Chat'
         component={Chat}
         />
-        
+
       </Stack.Navigator>
     </NavigationContainer>
     );
