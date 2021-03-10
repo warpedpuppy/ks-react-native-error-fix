@@ -18,21 +18,14 @@ export default class Start extends React.Component{
         super(props);
         this.state= {
             name: '',
-            backgroundColor: '',
-            colors: [
-                '#0048BA',
-                '#C46210',
-                '#3B7A57',
-                '#7FFFD4'
-            ]
         }
     }
 
 
 
  render() {
-    const { navigation } = this.props;
-    const { name, backgoundColor } = this.state;
+     const {navigation} = this.props;
+     const {name} = this.state;
     return (
         <ImageBackground source={image} style={styles.image}>
             <Text style={styles.title}>ChatApp</Text>
@@ -49,18 +42,17 @@ export default class Start extends React.Component{
                     <TextInput 
                     style={styles.yourName}
                     placeholder='Your Name'
-                    onChangeText={(name) => this.setState(name)}
+                    onChangeText={(name) => this.setState({name})}
                     value={name}
                     />
                 </View>
 
                 <Text style={styles.chooseText}>Choose Background Color:</Text>
                 <View style={styles.colorContainer}>
-                    <TouchableOpacity style={styles.color1} onPress={() => this.setState(backgroundColor)}></TouchableOpacity>
-                    <TouchableOpacity style={styles.color2} onPress={() => this.setState(backgroundColor)}></TouchableOpacity>
-                    <TouchableOpacity style={styles.color3} onPress={() => this.setState(backgroundColor)}></TouchableOpacity>
-                    <TouchableOpacity style={styles.color4} onPress={() => this.setState(backgroundColor)}></TouchableOpacity>
-                    <TouchableOpacity />
+                    <TouchableOpacity style={styles.color1} ></TouchableOpacity>
+                    <TouchableOpacity style={styles.color2} ></TouchableOpacity>
+                    <TouchableOpacity style={styles.color3} ></TouchableOpacity>
+                    <TouchableOpacity style={styles.color4} ></TouchableOpacity>
                 </View>
 
                 {/* 'button' that allowed for text within, presses navigates to chat, brings text and selected color with it */}
