@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import {StyleSheet, View, Text} from 'react-native';
 
 export default class Chat extends React.Component{
 
@@ -12,7 +12,6 @@ export default class Chat extends React.Component{
 
         return(
             <View style={{flex: 1, backgroundColor: color }}>
-                <Text>Welcome to chat</Text>
             </View>
         )
     }
