@@ -10,7 +10,7 @@ import { Icon } from 'react-native-elements';
 
 const image = require('../assets/background-image.png')
 
-const icon = require('../assets/icon.svg')
+const icon = require('../assets/personIcon.png')
 
 
 export default class Start extends React.Component{
@@ -18,6 +18,7 @@ export default class Start extends React.Component{
         super(props);
         this.state= {
             name: '',
+            color: ''
         }
     }
 
@@ -25,7 +26,7 @@ export default class Start extends React.Component{
 
  render() {
      const {navigation} = this.props;
-     const {name} = this.state;
+     const {name, color} = this.state;
     return (
         <ImageBackground source={image} style={styles.image}>
             <Text style={styles.title}>ChatApp</Text>
@@ -49,15 +50,15 @@ export default class Start extends React.Component{
 
                 <Text style={styles.chooseText}>Choose Background Color:</Text>
                 <View style={styles.colorContainer}>
-                    <TouchableOpacity style={styles.color1} ></TouchableOpacity>
-                    <TouchableOpacity style={styles.color2} ></TouchableOpacity>
-                    <TouchableOpacity style={styles.color3} ></TouchableOpacity>
-                    <TouchableOpacity style={styles.color4} ></TouchableOpacity>
+                    <TouchableOpacity style={styles.color1} onPress={() => this.setState({color: '#090C08'})} ></TouchableOpacity>
+                    <TouchableOpacity style={styles.color2} onPress={() => this.setState({color: '#474056'})}></TouchableOpacity>
+                    <TouchableOpacity style={styles.color3} onPress={() => this.setState({color: '#8A95A5'})}></TouchableOpacity>
+                    <TouchableOpacity style={styles.color4} onPress={() => this.setState({color: '#B9C6AE'})}></TouchableOpacity>
                 </View>
 
                 {/* 'button' that allowed for text within, presses navigates to chat, brings text and selected color with it */}
                 <TouchableOpacity 
-                    onPress={() => navigation.navigate('Chat', { name: name })}
+                    onPress={() => navigation.navigate('Chat', { name: name, color: color })}
                     style={styles.button}>
                         <Text style={styles.buttonText}>
                         Start Chatting
