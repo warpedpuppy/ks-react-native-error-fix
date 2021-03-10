@@ -5,13 +5,11 @@ import {
     View,
     Text,
     TextInput,
-    TouchableOpacity} from 'react-native';
+    TouchableOpacity,
+    } from 'react-native';
 import { Icon } from 'react-native-elements';
 
 const image = require('../assets/background-image.png')
-
-const icon = require('../assets/personIcon.png')
-
 
 export default class Start extends React.Component{
     constructor(props) {
@@ -33,12 +31,7 @@ export default class Start extends React.Component{
 
             <View style={styles.chatContainer}>
                 <View style={styles.yourContainer}>
-                    <Icon
-                    source={icon}
-                    name='person outline'
-                    size={25}
-                    color='#000'
-                    style={styles.icon}/>
+                    <Icon style={styles.icon} name='person-outline' color='#000' size={25} />
 
                     <TextInput 
                     style={styles.yourName}
