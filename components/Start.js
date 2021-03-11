@@ -43,21 +43,55 @@ export default class Start extends React.Component{
 
                 <Text style={styles.chooseText}>Choose Background Color:</Text>
                 <View style={styles.colorContainer}>
-                    <TouchableOpacity style={styles.color1} onPress={() => this.setState({color: '#090C08'})} ></TouchableOpacity>
-                    <TouchableOpacity style={styles.color2} onPress={() => this.setState({color: '#474056'})}></TouchableOpacity>
-                    <TouchableOpacity style={styles.color3} onPress={() => this.setState({color: '#8A95A5'})}></TouchableOpacity>
-                    <TouchableOpacity style={styles.color4} onPress={() => this.setState({color: '#B9C6AE'})}></TouchableOpacity>
+                    <TouchableOpacity 
+                    style={styles.color1} 
+                    onPress={() => this.setState({color: '#090C08'})}
+                    accessible={true}
+                    accessibilityRole='Button'
+                    accessibilityLabel='Choose Background Color Black'
+                    accessibilityHint='Clicking this will change the background of your chat window, optional.'
+                    ></TouchableOpacity>
+
+                    <TouchableOpacity 
+                    style={styles.color2} 
+                    onPress={() => this.setState({color: '#474056'})}
+                    accessible={true}
+                    accessibilityRole='Button'
+                    accessibilityLabel='Choose Background Color Dark Blue-Grey'
+                    accessibilityHint='Clicking this will change the background of your chat window, optional.'
+                    ></TouchableOpacity>
+
+                    <TouchableOpacity 
+                    style={styles.color3} 
+                    onPress={() => this.setState({color: '#8A95A5'})}
+                    accessible={true}
+                    accessibilityRole='Button'
+                    accessibilityLabel='Choose Background Color Light Slate-Grey'
+                    accessibilityHint='Clicking this will change the background of your chat window, optional.'   
+                    ></TouchableOpacity>
+
+                    <TouchableOpacity 
+                    style={styles.color4} 
+                    onPress={() => this.setState({color: '#B9C6AE'})}
+                    accessible={true}
+                    accessibilityRole='Button'
+                    accessibilityLabel='Choose Background Color Laurel Green'
+                    accessibilityHint='Clicking this will change the background of your chat window, optional.'  
+                    ></TouchableOpacity>
                 </View>
 
                 {/* 'button' that allowed for text within, presses navigates to chat, brings text and selected color with it */}
                 <TouchableOpacity 
                     onPress={() => navigation.navigate('Chat', { name: name, color: color })}
-                    style={styles.button}>
+                    style={styles.button}
+                    accessible={true}
+                    accessibilityRole='Button'
+                    accessibilityHint='Clicking this will enter new window chat window.'   
+                    >
                         <Text style={styles.buttonText}>
                         Start Chatting
                         </Text>
                 </TouchableOpacity>
-
             </View>
       </ImageBackground>
     )
