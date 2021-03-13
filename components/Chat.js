@@ -122,10 +122,10 @@ export default class Chat extends React.Component{
                 .orderBy('createdAt', 'desc')
                 .onSnapshot(this.onCollectionUpdate);
         });
-        this.systemWelcomeMessage();
+        this.renderSystemMessage();
     }
 
-    systemWelcomeMessage() {
+    renderSystemMessage() {
         this.setState({
             messages: [
                 {
