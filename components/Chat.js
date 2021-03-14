@@ -3,7 +3,10 @@ import {
     View,
     Platform,
     KeyboardAvoidingView,
+    Text,
+    StyleSheet
 } from 'react-native';
+import { withTheme } from 'react-native-elements';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 const firebase = require('firebase');
 require('firebase/firestore');
@@ -19,7 +22,7 @@ export default class Chat extends React.Component{
                 name: '',
                 avatar: ''
             },
-            loggedInText: ''
+            loggedInText: 'Please wait, you are getting logged in.'
         }
 
         const firebaseConfig = {
@@ -115,7 +118,8 @@ export default class Chat extends React.Component{
                     avatar: 'https://placeimg.com/140/140/any'
                 },
                 messages: [],
-                loggedInText: 'Hello there'
+                loggedInText: `Hi ${this.props.route.params.name}, welcome to the chat!`,
+
             });
             this.referenceChatMessages = firebase.firestore().collection('messages');
             this.unsubscribe = this.referenceChatMessages
@@ -154,6 +158,7 @@ export default class Chat extends React.Component{
 
         return(
             <View style={{flex: 1, backgroundColor: color }}>
+                <Text style={styles.loggedInText}>{this.state.loggedInText}</Text>
                 <GiftedChat
                 renderBubble={this.renderBubble.bind(this)}
                 messages={this.state.messages}
@@ -166,3 +171,11 @@ export default class Chat extends React.Component{
         )
     }
 }
+
+const styles = StyleSheet.create({
+    loggedInText: {
+        textAlign: 'center',
+        color: 'white',
+        opacity: 50
+    }
+})
