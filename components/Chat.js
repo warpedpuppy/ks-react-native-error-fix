@@ -126,22 +126,22 @@ export default class Chat extends React.Component{
                 .orderBy('createdAt', 'desc')
                 .onSnapshot(this.onCollectionUpdate);
         });
-        this.renderSystemMessage();
+        // this.renderSystemMessage();
     }
 
-    renderSystemMessage() {
-        this.setState({
-            messages: [
-                {
-                    _id: 1,
-                    text: `Hi ${this.props.route.params.name}, welcome to the chat!`,
-                    createdAt: new Date(),
-                // grey-scaled message above all others, system message used for something like "A has entered chat!", etc.
-                    system: true
-                },
-            ]
-        })
-    }
+    // renderSystemMessage() {
+    //     this.setState({
+    //         messages: [
+    //             {
+    //                 _id: 1,
+    //                 text: `Hi ${this.props.route.params.name}, welcome to the chat!`,
+    //                 createdAt: new Date(),
+    //             // grey-scaled message above all others, system message used for something like "A has entered chat!", etc.
+    //                 system: true
+    //             },
+    //         ]
+    //     })
+    // }
 
     componentWillUnmount() {
         this.unsubscribe();
