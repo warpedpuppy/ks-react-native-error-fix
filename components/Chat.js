@@ -7,11 +7,11 @@ import {
     StyleSheet,
     LogBox
 } from 'react-native';
-import { withTheme } from 'react-native-elements';
-import { GiftedChat, Bubble } from 'react-native-gifted-chat';
+import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
 const firebase = require('firebase');
 require('firebase/firestore');
 import AsyncStorage from '@react-native-community/async-storage';
+import NetInfo from '@react-native-community/netinfo';
 
 
 export default class Chat extends React.Component{
@@ -25,7 +25,8 @@ export default class Chat extends React.Component{
                 name: '',
                 avatar: ''
             },
-            loggedInText: 'Please wait, you are getting logged in.'
+            loggedInText: 'Please wait, you are getting logged in.',
+            isConnected: false
         }
 
         const firebaseConfig = {
@@ -127,6 +128,15 @@ export default class Chat extends React.Component{
     }
 
     componentDidMount() {
+        // checking if offline or online, will fetch data from either asyncStorage or firestore
+        NetInfo.fetch().then(connection => {
+            if (connection.isConnected) {
+                console.log('online');
+            } else {
+                console.log('offline');
+            }
+        });
+
         // calls firebase auth to app.
         this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
             if (!user) {
@@ -192,6 +202,17 @@ export default class Chat extends React.Component{
         );
     };
 
+    renderInputToolbar(props) {
+        if(this.state.isConneted == false) {
+        } else {
+            return(
+                <InputToolbar
+                {...props}
+                />
+            );
+        }
+    }
+
     render() {
         // pulling props from Start.js as passed in onPress
         const {name, color} = this.props.route.params;
@@ -204,6 +225,7 @@ export default class Chat extends React.Component{
                 <Text style={styles.loggedInText}>{this.state.loggedInText}</Text>
                 <GiftedChat
                 renderBubble={this.renderBubble.bind(this)}
+                renderInputToolbar={this.renderInputToolbar.bind(this)}
                 messages={this.state.messages}
                 onSend={messages => this.onSend(messages)}
                 user={this.state.user}
