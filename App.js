@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Yellowbox} from 'react-native';
+import { StyleSheet} from 'react-native';
 import 'react-native-gesture-handler';
 
 // navigation
@@ -15,11 +15,6 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
   }
-
-  // patch for ignoring yellowbox warning during development, can't use useEffect hook as suggested in React 16.13.1 docs
-  componentDidMount() {
-    console.disableYellowBox = true;
-    }
 
   render() {
   return (
