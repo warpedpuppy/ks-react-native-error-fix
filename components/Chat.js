@@ -4,12 +4,15 @@ import {
     Platform,
     KeyboardAvoidingView,
     Text,
-    StyleSheet
+    StyleSheet,
+    LogBox
 } from 'react-native';
 import { withTheme } from 'react-native-elements';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 const firebase = require('firebase');
 require('firebase/firestore');
+import AsyncStorage from '@react-native-community/async-storage';
+
 
 export default class Chat extends React.Component{
     constructor() {
@@ -42,6 +45,13 @@ export default class Chat extends React.Component{
 
         this.referenceChatMessages = firebase.firestore().collection('messages');
         firebase.firestore().collection('messages').doc('messages');
+
+        // to ignore warnings
+        LogBox.ignoreLogs([
+            'Setting a timer',
+            'Animated.event now requires a second argument for options',
+            'Cannot update a component from inside'
+        ])
     }
 
     onCollectionUpdate = (querySnapshot) => {
@@ -64,6 +74,18 @@ export default class Chat extends React.Component{
         })
     }
 
+    async getMessages() {
+        let messages = '';
+        try {
+            messages = await AsyncStorage.getItem('messages') || [];
+            this.setState({
+                messages: JSON.parse(messages)
+            });
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
+
     addMessage() {
         const message = this.state.messages[0];
         this.referenceChatMessages.add({
@@ -74,6 +96,14 @@ export default class Chat extends React.Component{
         });
     }
 
+    async saveMessages() {
+        try {
+            await AsyncStorage.setItem('messages', JSON.stringify(this.state.messages));
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
+
     onSend(messages = []) {
         this.setState(previousState => ({
             // .append is built into GiftedChat component
@@ -81,27 +111,19 @@ export default class Chat extends React.Component{
         }),
         () => {
             this.addMessage();
+            this.saveMessages();
         });
     }
 
-    renderBubble(props) {
-        return(
-            <Bubble
-            // inherits props with spread operator
-            {...props}
-            wrapperStyle={{
-                // right speech bubbles are for the sender
-                right: {
-                    backgroundColor: 'pink',
-                }
-            }}
-            textStyle={{
-                right: {
-                    color: 'black',
-                }
-            }}
-            />
-        );
+    async deleteMessages() {
+        try{
+            await AsyncStorage.removeItem('messages');
+            this.setState({
+                messages: []
+            })
+        } catch (error) {
+            console.log(error.message);
+        }
     }
 
     componentDidMount() {
@@ -126,6 +148,7 @@ export default class Chat extends React.Component{
                 .orderBy('createdAt', 'desc')
                 .onSnapshot(this.onCollectionUpdate);
         });
+        this.getMessages();
         // this.renderSystemMessage();
     }
 
@@ -146,8 +169,28 @@ export default class Chat extends React.Component{
     componentWillUnmount() {
         this.unsubscribe();
         this.authUnsubscribe();
-    }
-    
+    };
+
+
+    renderBubble(props) {
+        return(
+            <Bubble
+            // inherits props with spread operator
+            {...props}
+            wrapperStyle={{
+                // right speech bubbles are for the sender
+                right: {
+                    backgroundColor: 'pink',
+                }
+            }}
+            textStyle={{
+                right: {
+                    color: 'black',
+                }
+            }}
+            />
+        );
+    };
 
     render() {
         // pulling props from Start.js as passed in onPress
