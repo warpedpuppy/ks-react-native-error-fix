@@ -12,6 +12,7 @@ const firebase = require('firebase');
 require('firebase/firestore');
 import AsyncStorage from '@react-native-community/async-storage';
 import NetInfo from '@react-native-community/netinfo';
+import AppContext from '../AppContext';
 
 
 export default class Chat extends React.Component{
@@ -51,7 +52,7 @@ export default class Chat extends React.Component{
         LogBox.ignoreLogs([
             'Setting a timer',
             'Animated.event now requires a second argument for options',
-            'Cannot update a component from inside'
+            // 'Cannot update a component from inside'
         ])
     }
 
@@ -144,7 +145,7 @@ export default class Chat extends React.Component{
                     this.setState({
                         user: {
                             _id: user.uid,
-                            name: this.props.route.params.name,
+                            name: this.context.name,
                             avatar: 'https://placeimg.com/140/140/any'
                         },
                         messages: [],
@@ -220,7 +221,8 @@ export default class Chat extends React.Component{
 
     render() {
         // pulling props from Start.js as passed in onPress
-        const {name, color} = this.props.route.params;
+        const {color} = this.props.route.params;
+        const {name} = this.context;
 
         // props user's name into title of chat message
         this.props.navigation.setOptions({ title: name })
@@ -242,6 +244,7 @@ export default class Chat extends React.Component{
     }
 }
 
+Chat.contextType = AppContext;
 const styles = StyleSheet.create({
     loggedInText: {
         textAlign: 'center',
