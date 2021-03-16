@@ -5,14 +5,24 @@ import {
     KeyboardAvoidingView,
     Text,
     StyleSheet,
-    LogBox
+    LogBox,
+    Image,
 } from 'react-native';
 import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
+
+// global variables
+import AppContext from '../AppContext';
+
+// firebase
 const firebase = require('firebase');
 require('firebase/firestore');
+
+// special features
 import AsyncStorage from '@react-native-community/async-storage';
 import NetInfo from '@react-native-community/netinfo';
-import AppContext from '../AppContext';
+import MapView from 'react-native-maps';
+
+import CustomActions from './CustomActions';
 
 
 export default class Chat extends React.Component{
@@ -27,7 +37,8 @@ export default class Chat extends React.Component{
                 avatar: ''
             },
             loggedInText: 'Please wait, you are getting logged in.',
-            isConnected: false
+            isConnected: false,
+            image: null
         }
 
         const firebaseConfig = {
@@ -52,7 +63,7 @@ export default class Chat extends React.Component{
         LogBox.ignoreLogs([
             'Setting a timer',
             'Animated.event now requires a second argument for options',
-            // 'Cannot update a component from inside'
+            'Cannot update a component from inside'
         ])
     }
 
@@ -68,7 +79,10 @@ export default class Chat extends React.Component{
                     _id: data.user._id,
                     name: data.user.name,
                     avatar: data.user.avatar,
-                }
+                },
+                // optional/special features
+                image: data.image || null,
+                location: data.location || null
             });
         });
         this.setState({
@@ -77,7 +91,7 @@ export default class Chat extends React.Component{
     }
 
     async getMessages() {
-        let messages = '';
+        let messages = [];
         try {
             messages = await AsyncStorage.getItem('messages') || [];
             this.setState({
@@ -95,6 +109,8 @@ export default class Chat extends React.Component{
             createdAt: message.createdAt,
             text: message.text || null,
             user: message.user,
+            image: message.image || null,
+            location: message.location || null
         });
     }
 
@@ -133,9 +149,6 @@ export default class Chat extends React.Component{
         NetInfo.fetch().then(connection => {
             if (connection.isConnected) {
                 console.log('online');
-                this.setState({
-                    isConnected: true
-                })
                 // calls firebase auth to app.
                 this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
                     if (!user) {
@@ -143,8 +156,10 @@ export default class Chat extends React.Component{
                     }
                     // update user with current active user data
                     this.setState({
+                        isConnected: true,
                         user: {
                             _id: user.uid,
+                            // changed because of AppContext
                             name: this.context.name,
                             avatar: 'https://placeimg.com/140/140/any'
                         },
@@ -187,7 +202,6 @@ export default class Chat extends React.Component{
         this.authUnsubscribe();
     };
 
-
     renderBubble(props) {
         return(
             <Bubble
@@ -219,6 +233,33 @@ export default class Chat extends React.Component{
         }
     }
 
+    renderCustomActions = (props) => {
+        return <CustomActions {...props}/>
+    }
+
+    renderCustomView(props) {
+        const {currentMessage} = props;
+        if(currentMessage.location) {
+            return(
+                <MapView
+                style={{
+                    width: 150,
+                    height: 100,
+                    borderRadius: 13,
+                    margin: 3
+                }}
+                region={{
+                    latitude: currentMessage.location.latitude,
+                    longitude: currentMessage.location.longitude,
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421,
+                }}
+                />
+            );
+        }
+        return null;
+    }
+
     render() {
         // pulling props from Start.js as passed in onPress
         const {color} = this.props.route.params;
@@ -229,14 +270,23 @@ export default class Chat extends React.Component{
 
         return(
             <View style={{flex: 1, backgroundColor: color }}>
+                {this.state.image && 
+                    <Image source={{uri: this.state.image.uri}} style={styles.image}/>}
+
+                {/* weclome text in lieu of systemMessage */}
                 <Text style={styles.loggedInText}>{this.state.loggedInText}</Text>
+
                 <GiftedChat
                 renderBubble={this.renderBubble.bind(this)}
                 renderInputToolbar={this.renderInputToolbar.bind(this)}
                 messages={this.state.messages}
                 onSend={messages => this.onSend(messages)}
                 user={this.state.user}
+                renderActions={this.renderCustomActions}
+                renderCustomView={this.renderCustomView}
+                image={this.state.image}
                 />
+
                 {/* old android keyboard covering fix */}
                 {Platform.OS === 'android' ? <KeyboardAvoidingView behavior='height'/> : null}
             </View>
@@ -250,5 +300,9 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: 'white',
         opacity: 50
+    },
+    image: {
+        width: 200,
+        height: 200
     }
 })
