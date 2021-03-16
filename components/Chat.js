@@ -132,33 +132,38 @@ export default class Chat extends React.Component{
         NetInfo.fetch().then(connection => {
             if (connection.isConnected) {
                 console.log('online');
+                this.setState({
+                    isConnected: true
+                })
+                // calls firebase auth to app.
+                this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+                    if (!user) {
+                        await firebase.auth().signInAnonymously();
+                    }
+                    // update user with current active user data
+                    this.setState({
+                        user: {
+                            _id: user.uid,
+                            name: this.props.route.params.name,
+                            avatar: 'https://placeimg.com/140/140/any'
+                        },
+                        messages: [],
+                        loggedInText: `Hi ${this.props.route.params.name}, welcome to the chat!`,
+
+                    });
+                    this.referenceChatMessages = firebase.firestore().collection('messages');
+                    this.unsubscribe = this.referenceChatMessages
+                        .orderBy('createdAt', 'desc')
+                        .onSnapshot(this.onCollectionUpdate);
+                });
             } else {
                 console.log('offline');
+                this.setState({
+                    isConnected: false
+                });
+                this.getMessages();
             }
         });
-
-        // calls firebase auth to app.
-        this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
-            if (!user) {
-                await firebase.auth().signInAnonymously();
-            }
-            // update user with current active user data
-            this.setState({
-                user: {
-                    _id: user.uid,
-                    name: this.props.route.params.name,
-                    avatar: 'https://placeimg.com/140/140/any'
-                },
-                messages: [],
-                loggedInText: `Hi ${this.props.route.params.name}, welcome to the chat!`,
-
-            });
-            this.referenceChatMessages = firebase.firestore().collection('messages');
-            this.unsubscribe = this.referenceChatMessages
-                .orderBy('createdAt', 'desc')
-                .onSnapshot(this.onCollectionUpdate);
-        });
-        this.getMessages();
         // this.renderSystemMessage();
     }
 
