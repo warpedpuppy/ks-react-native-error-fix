@@ -52,8 +52,8 @@ export default class CustomActions extends React.Component{
 
                 // cancelled is a value returned by launchImageLibraryAsync, which is true if user cancells process and doesn't pick file
                 if(!result.cancelled) {
-                    this.storeImage(result.uri);
-                }
+                    const imageUrl = await this.storeImage(result.uri);
+                    this.props.onSend({image: imageUrl, text: ''});                }
             }
         }
         catch (error) {
@@ -118,23 +118,25 @@ export default class CustomActions extends React.Component{
     // permissions for location
 
     getLocation = async () => {
-        const {status} = await Permissions.askAsync(Permissions.LOCATION);
-        
-        if(status === 'granted') {
-            let result = await Location.getCurrentPositionAsync({});
+        try {
+            const {status} = await Permissions.askAsync(Permissions.LOCATION);
 
-            const longitude = JSON.stringify(result.coords.longitude);
-            const latitude = JSON.stringify(result.coords.latitude)
-
-            if (result) {
-                this.props.onSend({
-                    location: {
-                        latitude: latitude,
-                        longitude: longitude
-                    },
-                    text: ''
-                });
+            if(status === 'granted') {
+            let result = await Location.getCurrentPositionAsync({}).catch((error) => console.log(error));
+            // lat and long expect a number value, not string
+            // const longitude = JSON.stringify(result.coords.longitude);
+            // const altitude = JSON.stringify(result.coords.latitude);
+                if (result) {
+                    this.props.onSend({
+                        location: {
+                            latitude: result.coords.latitude,
+                            longitude: result.coords.longitude
+                        },
+                    });
+                }
             }
+        } catch(error) {
+            console.log(error.message);
         }
     }
 
@@ -172,7 +174,7 @@ const styles = StyleSheet.create({
     },
 });
 
-CustomActions.contextType = {
+CustomActions.contextTypes = {
     actionSheet: PropTypes.func
 };
 
