@@ -63,12 +63,14 @@ export default class Chat extends React.Component{
         LogBox.ignoreLogs([
             'Setting a timer',
             'Animated.event now requires a second argument for options',
-            'Cannot update a component from inside'
+            // 'Cannot update a component from inside'
         ])
     }
 
     onCollectionUpdate = (querySnapshot) => {
-        const messages = [];
+        // distributes messages state values over the new array, rather than creating new
+        console.log('collection updated')
+        const messages = [...this.state.messages];
         querySnapshot.forEach((doc) => {
             let data = doc.data();
             messages.push({
@@ -155,6 +157,7 @@ export default class Chat extends React.Component{
                         await firebase.auth().signInAnonymously();
                     }
                     // update user with current active user data
+                    console.log('net info response has been recieved')
                     this.setState({
                         isConnected: true,
                         user: {
@@ -163,7 +166,7 @@ export default class Chat extends React.Component{
                             name: this.context.name,
                             avatar: 'https://placeimg.com/140/140/any'
                         },
-                        messages: [],
+                        messages: [...this.state.messages],
                         loggedInText: `Hi ${this.props.route.params.name}, welcome to the chat!`,
 
                     });
@@ -180,22 +183,23 @@ export default class Chat extends React.Component{
                 this.getMessages();
             }
         });
-        // this.renderSystemMessage();
+        this.renderSystemMessage();
     }
 
-    // renderSystemMessage() {
-    //     this.setState({
-    //         messages: [
-    //             {
-    //                 _id: 1,
-    //                 text: `Hi ${this.props.route.params.name}, welcome to the chat!`,
-    //                 createdAt: new Date(),
-    //             // grey-scaled message above all others, system message used for something like "A has entered chat!", etc.
-    //                 system: true
-    //             },
-    //         ]
-    //     })
-    // }
+    renderSystemMessage() {
+        console.log('render system message');
+        this.setState({
+            messages: [
+                {
+                    _id: 1,
+                    text: `Hi ${this.props.route.params.name}, welcome to the chat!`,
+                    createdAt: new Date(),
+                // grey-scaled message above all others, system message used for something like "A has entered chat!", etc.
+                    system: true
+                },
+            ]
+        })
+    }
 
     componentWillUnmount() {
         this.unsubscribe();
