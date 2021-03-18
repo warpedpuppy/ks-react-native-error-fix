@@ -102,11 +102,11 @@ export default class CustomActions extends React.Component{
             // console.log('ref', ref);
 
             const snapshot = await ref.put(blob);
-            console.log('snapshot', snapshot);
+            // console.log('snapshot', snapshot);
             blob.close();
 
             const imageDownload = await snapshot.ref.getDownloadURL();
-            console.log(imageDownload);
+            // console.log(imageDownload);
             return imageDownload;
 
         }
